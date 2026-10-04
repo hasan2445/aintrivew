@@ -1,0 +1,47 @@
+# Web framework
+fastapi>=0.115.0,<1.0
+uvicorn[standard]>=0.30.0,<1.0
+python-multipart>=0.0.9
+jinja2>=3.1.4
+
+# Configuration & validation
+
+pydantic>=2.7.0,<3.0
+pydantic-settings>=2.3.0,<3.0
+email-validator>=2.1.0
+python-dotenv>=1.0.0
+
+# Persistence
+SQLAlchemy>=2.0.30,<3.0
+psycopg2-binary>=2.9.9
+redis>=5.0.0,<7.0
+
+# Auth
+# The code calls bcrypt directly; passlib was declared but never imported.
+bcrypt>=4.1.0,<5.0
+python-jose[cryptography]>=3.3.0
+
+# LLM
+langchain-core>=0.2.0
+langchain-groq>=0.1.5
+
+# Resume parsing
+# pypdf supersedes the unmaintained PyPDF2.
+pypdf>=4.2.0
+python-docx>=1.1.0
+
+# Vision / speech (proctoring, transcription, TTS)
+numpy>=1.26.0,<3.0
+
+
+opencv-python-headless>=4.9.0,<5.0
+
+
+
+ultralytics>=8.2.0
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2.0
+
+elevenlabs>=1.0.0
+

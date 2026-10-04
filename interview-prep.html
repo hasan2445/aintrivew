@@ -1,0 +1,712 @@
+<title>InterviewAI — Interview Dossier</title>
+<style>
+:root{
+  --paper:#eef1f4; --surface:#ffffff; --surface-2:#f7f9fb;
+  --ink:#161b22; --ink-2:#39424f; --muted:#616b7a; --faint:#8c96a5;
+  --line:#d5dbe3; --line-soft:#e5e9ef;
+  --accent:#2d4f7c; --accent-ink:#1f3a5c; --accent-wash:#e6ecf4;
+  --easy:#2f6f5e; --easy-wash:#e2efeb;
+  --medium:#9a6a17; --medium-wash:#f4ecdd;
+  --hard:#a8452c; --hard-wash:#f6e6e1;
+  --expert:#6d3a5e; --expert-wash:#f0e6ee;
+  --flag:#a8452c; --flag-wash:#f9ece8;
+  --ok:#2f6f5e;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1319; --surface:#161b23; --surface-2:#1b212a;
+    --ink:#e3e8ef; --ink-2:#c2cad6; --muted:#98a2b1; --faint:#6f7a8a;
+    --line:#28303b; --line-soft:#212934;
+    --accent:#8fb0dc; --accent-ink:#a9c4e8; --accent-wash:#1b2635;
+    --easy:#6fbfa6; --easy-wash:#16261f;
+    --medium:#d8a94f; --medium-wash:#2a2113;
+    --hard:#e08469; --hard-wash:#2c1a15;
+    --expert:#c48fb4; --expert-wash:#271b24;
+    --flag:#e08469; --flag-wash:#2c1a15;
+    --ok:#6fbfa6;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1319; --surface:#161b23; --surface-2:#1b212a;
+  --ink:#e3e8ef; --ink-2:#c2cad6; --muted:#98a2b1; --faint:#6f7a8a;
+  --line:#28303b; --line-soft:#212934;
+  --accent:#8fb0dc; --accent-ink:#a9c4e8; --accent-wash:#1b2635;
+  --easy:#6fbfa6; --easy-wash:#16261f;
+  --medium:#d8a94f; --medium-wash:#2a2113;
+  --hard:#e08469; --hard-wash:#2c1a15;
+  --expert:#c48fb4; --expert-wash:#271b24;
+  --flag:#e08469; --flag-wash:#2c1a15;
+  --ok:#6fbfa6;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{text-wrap:balance; margin:0; font-weight:640; letter-spacing:-.012em; line-height:1.22;}
+p{margin:0;}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb, var(--accent) 35%, transparent);}
+a:hover{border-bottom-color:var(--accent);}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px;}
+code{font-family:var(--mono); font-size:.855em;}
+
+/* ---------- shell ---------- */
+.wrap{max-width:1220px; margin:0 auto; padding:0 24px;}
+.shell{display:grid; grid-template-columns:232px minmax(0,1fr); gap:52px; align-items:start;}
+@media (max-width:1000px){ .shell{grid-template-columns:1fr; gap:0;} }
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--line); background:var(--surface);}
+.masthead .wrap{padding-top:38px; padding-bottom:26px;}
+.eyebrow{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);}
+h1{font-size:clamp(30px,4.2vw,46px); margin:12px 0 10px; letter-spacing:-.028em;}
+.sub{color:var(--ink-2); max-width:66ch; font-size:16px;}
+.stats{display:flex; flex-wrap:wrap; gap:0; margin-top:26px; border-top:1px solid var(--line-soft);}
+.stat{padding:14px 26px 12px 0; margin-right:26px; border-right:1px solid var(--line-soft);}
+.stat:last-child{border-right:0;}
+.stat b{display:block; font-size:23px; font-variant-numeric:tabular-nums; letter-spacing:-.02em; font-weight:660;}
+.stat span{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);}
+
+/* ---------- rail ---------- */
+.rail{position:sticky; top:0; max-height:100vh; overflow-y:auto; padding:34px 0 40px;}
+@media (max-width:1000px){ .rail{position:static; max-height:none; border-bottom:1px solid var(--line); margin-bottom:8px;} }
+.rail h5{font-family:var(--mono); font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--faint); margin:0 0 10px; font-weight:600;}
+.rail nav{display:flex; flex-direction:column; gap:1px; margin-bottom:26px;}
+.rail nav a{
+  display:flex; gap:9px; align-items:baseline; padding:4px 8px 4px 7px; margin-left:-7px;
+  font-size:13px; color:var(--ink-2); border-bottom:0; border-left:2px solid transparent; border-radius:2px;
+}
+.rail nav a:hover{background:var(--surface-2); color:var(--ink);}
+.rail nav a.on{border-left-color:var(--accent); color:var(--ink); font-weight:600; background:var(--surface-2);}
+.rail nav a i{font-family:var(--mono); font-style:normal; font-size:10.5px; color:var(--faint); font-variant-numeric:tabular-nums;}
+.rail nav a.on i{color:var(--accent);}
+
+.filter{border-top:1px solid var(--line-soft); padding-top:16px;}
+.fbtns{display:flex; flex-wrap:wrap; gap:5px;}
+.fbtn{
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 8px; border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  border-radius:2px; cursor:pointer; font-weight:600;
+}
+.fbtn[aria-pressed="true"]{color:var(--ink); border-color:currentColor;}
+.fbtn[data-tier="easy"][aria-pressed="true"]{color:var(--easy); background:var(--easy-wash);}
+.fbtn[data-tier="medium"][aria-pressed="true"]{color:var(--medium); background:var(--medium-wash);}
+.fbtn[data-tier="hard"][aria-pressed="true"]{color:var(--hard); background:var(--hard-wash);}
+.fbtn[data-tier="expert"][aria-pressed="true"]{color:var(--expert); background:var(--expert-wash);}
+.fnote{font-size:11.5px; color:var(--faint); margin-top:9px; line-height:1.45;}
+
+/* ---------- main ---------- */
+main{padding:34px 0 90px; min-width:0;}
+.sec{margin-bottom:56px; scroll-margin-top:14px;}
+.sec-head{border-bottom:2px solid var(--ink); padding-bottom:12px; margin-bottom:22px;}
+.sec-kicker{display:flex; align-items:baseline; gap:11px;}
+.sec-kicker i{font-family:var(--mono); font-style:normal; font-size:11px; letter-spacing:.1em; color:var(--accent); font-weight:700;}
+.sec h2{font-size:clamp(21px,2.4vw,27px);}
+.sec-lede{color:var(--muted); font-size:14px; margin-top:8px; max-width:74ch;}
+
+.h3{font-size:15px; margin:30px 0 12px; letter-spacing:0; text-transform:uppercase; font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--muted); font-weight:700;}
+.prose p+p{margin-top:12px;}
+.prose{max-width:72ch; color:var(--ink-2);}
+.prose strong{color:var(--ink); font-weight:640;}
+
+/* ---------- ledger rows ---------- */
+.qlist{list-style:none; margin:0; padding:0; border-top:1px solid var(--line);}
+.q{border-bottom:1px solid var(--line-soft); padding:16px 0 17px; display:grid; grid-template-columns:82px minmax(0,1fr); gap:18px;}
+@media (max-width:640px){ .q{grid-template-columns:1fr; gap:8px;} }
+.q-tag{display:flex; flex-direction:column; gap:5px; align-items:flex-start;}
+.tier{font-family:var(--mono); font-size:9.5px; letter-spacing:.11em; text-transform:uppercase; font-weight:700; padding:2px 6px; border-radius:2px; white-space:nowrap;}
+.tier-easy{color:var(--easy); background:var(--easy-wash);}
+.tier-medium{color:var(--medium); background:var(--medium-wash);}
+.tier-hard{color:var(--hard); background:var(--hard-wash);}
+.tier-expert{color:var(--expert); background:var(--expert-wash);}
+.q-id{font-family:var(--mono); font-size:10.5px; color:var(--faint); font-variant-numeric:tabular-nums; padding-left:1px;}
+.q-text{font-family:var(--serif); font-size:16.5px; line-height:1.5; color:var(--ink);}
+.q-text em{font-style:italic;}
+
+.detail{margin-top:13px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 26px; padding:14px 16px; background:var(--surface); border:1px solid var(--line-soft); border-radius:3px;}
+@media (max-width:760px){ .detail{grid-template-columns:1fr;} }
+.detail.one{grid-template-columns:1fr;}
+.dt h4{font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:700;}
+.dt p, .dt li{font-size:13.5px; color:var(--ink-2); line-height:1.55;}
+.dt ul, .dt ol{margin:0; padding-left:17px; display:flex; flex-direction:column; gap:4px;}
+.dt ol{counter-reset:fu; list-style:none; padding-left:0;}
+.dt ol li{counter-increment:fu; padding-left:23px; position:relative;}
+.dt ol li::before{content:"→" counter(fu); position:absolute; left:0; font-family:var(--mono); font-size:10px; color:var(--faint); top:2px;}
+.ev{list-style:none; padding-left:0 !important;}
+.ev li{font-size:12.5px; padding-left:0;}
+.ev code{background:var(--accent-wash); color:var(--accent-ink); padding:1px 5px; border-radius:2px; white-space:nowrap;}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface); margin-top:6px;}
+table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:560px;}
+th{
+  text-align:left; font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--surface-2);
+  white-space:nowrap;
+}
+td{padding:10px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+td code{background:var(--surface-2); padding:1px 4px; border-radius:2px; color:var(--ink);}
+td strong{color:var(--ink); font-weight:620;}
+
+/* ---------- callouts ---------- */
+.note{border-left:2px solid var(--accent); background:var(--surface); padding:12px 16px; font-size:13.5px; color:var(--ink-2); margin-top:14px; border-radius:0 3px 3px 0;}
+.note.warn{border-left-color:var(--flag); background:var(--flag-wash);}
+.note b{color:var(--ink);}
+.gap{color:var(--flag); font-weight:640;}
+
+/* ---------- trap / list blocks ---------- */
+.blocks{display:flex; flex-direction:column; gap:0; border-top:1px solid var(--line);}
+.block{border-bottom:1px solid var(--line-soft); padding:15px 0;}
+.block h4{font-size:14.5px; margin-bottom:6px;}
+.block h4 span{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--flag); text-transform:uppercase; margin-right:9px; font-weight:700;}
+.block p{font-size:13.5px; color:var(--ink-2);}
+.block .ev{margin-top:7px;}
+
+ol.rank{list-style:none; counter-reset:r; padding:0; margin:0; border-top:1px solid var(--line);}
+ol.rank li{counter-increment:r; border-bottom:1px solid var(--line-soft); padding:12px 0 12px 44px; position:relative; font-family:var(--serif); font-size:16px; line-height:1.45;}
+ol.rank li::before{
+  content:counter(r,decimal-leading-zero); position:absolute; left:0; top:14px;
+  font-family:var(--mono); font-size:11px; color:var(--accent); font-weight:700; font-variant-numeric:tabular-nums;
+}
+ol.rank li small{display:block; font-family:var(--sans); font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+.mock{list-style:none; padding:0; margin:0; border-top:1px solid var(--line);}
+.mock li{border-bottom:1px solid var(--line-soft); padding:13px 0 13px 46px; position:relative;}
+.mock li::before{content:attr(data-n); position:absolute; left:0; top:15px; font-family:var(--mono); font-size:11px; color:var(--faint); font-variant-numeric:tabular-nums; font-weight:700;}
+.mock .phase{
+  padding:16px 0 6px 0; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:10px;
+  letter-spacing:.15em; text-transform:uppercase; color:var(--accent); font-weight:700;
+}
+.mock .phase::before{content:"";}
+.mock q{font-family:var(--serif); font-size:16px; quotes:none; color:var(--ink); display:block; line-height:1.45;}
+.mock small{display:block; font-size:12.5px; color:var(--muted); margin-top:5px;}
+.mock small b{color:var(--ink-2); font-weight:620;}
+
+footer{border-top:1px solid var(--line); margin-top:20px; padding:22px 0 40px; color:var(--faint); font-size:12.5px;}
+
+@media print{
+  .rail,.filter{display:none;} .shell{grid-template-columns:1fr;}
+  body{background:#fff;} .q{break-inside:avoid;}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Technical interview dossier · prepared from source · post-fix</div>
+    <h1>InterviewAI</h1>
+    <p class="sub">Trimmed to this project only. Every question below is answerable from this repository — FastAPI backend, vanilla-JS SPA, Groq/Llama question engine, MediaPipe + YOLOv8 proctoring, Redis session state, Postgres records. Generic interview material has been removed; what remains is what an interviewer can actually open the repo and ask about.</p>
+    <div class="stats">
+      <div class="stat"><b id="s-q">—</b><span>Questions</span></div>
+      <div class="stat"><b>24</b><span>Defects fixed</span></div>
+      <div class="stat"><b>38</b><span>Tests</span></div>
+      <div class="stat"><b>3</b><span>Open items</span></div>
+      <div class="stat"><b>~7k</b><span>Lines reviewed</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <aside class="rail">
+    <h5>Contents</h5>
+    <nav id="toc">
+      <a href="#analysis"><i>00</i>System analysis</a>
+      <a href="#ledger"><i>01</i>Defect ledger</a>
+      <a href="#core"><i>02</i>Core questions</a>
+      <a href="#traps"><i>03</i>Interview traps</a>
+      <a href="#open"><i>04</i>What's still open</a>
+      <a href="#study"><i>05</i>Study before you go</a>
+    </nav>
+    <div class="filter">
+      <h5>Filter by tier</h5>
+      <div class="fbtns">
+        <button class="fbtn" data-tier="easy" aria-pressed="true">Easy</button>
+        <button class="fbtn" data-tier="medium" aria-pressed="true">Med</button>
+        <button class="fbtn" data-tier="hard" aria-pressed="true">Hard</button>
+        <button class="fbtn" data-tier="expert" aria-pressed="true">Expert</button>
+      </div>
+      <p class="fnote">Turn off Easy and Medium to drill only what a senior interviewer will push on.</p>
+    </div>
+  </aside>
+
+  <main>
+
+  <!-- =============== 00 ANALYSIS =============== -->
+  <section class="sec" id="analysis">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>00</i><h2>System analysis</h2></div>
+      <p class="sec-lede">What the project is, how it runs, and where the shipped behaviour now matches what the UI claims. The gap between those two used to be where the hard questions came from; most of it is closed, and closing it is itself the best material you have.</p>
+    </div>
+
+    <div class="prose">
+      <h3 class="h3">Purpose and workflow</h3>
+      <p>InterviewAI is a mock-interview simulator. A candidate signs up, uploads a resume, picks a target role <em>and a difficulty</em>, and is interviewed by an LLM that generates questions from the resume, asks adaptive follow-ups, evaluates each answer, and produces a scored report. A webcam proctoring layer watches for a missing face, extra people and phones. An admin user can list all users and interview rows.</p>
+      <p>End-to-end, as implemented: <strong>signup/login</strong> → <strong>upload screen</strong> (resume + role) → <strong>setup screen</strong> (difficulty) → <strong>analysis screen</strong> posts <code>POST /api/upload-resume</code> with resume, role and difficulty → server extracts text (client text accepted only for PDFs) → <strong>one Groq call generates 8–12 questions</strong> → session to Redis, row to Postgres → <strong>answer loop</strong> at <code>POST /api/session/{id}/answer</code>, each answer carrying a turn token, evaluated and either producing a follow-up or advancing the index → <strong>report</strong> at <code>GET /api/session/{id}/comprehensive-report</code>, served from Postgres if already generated → <strong><code>POST /api/session/{id}/end</code></strong>, which takes no body and computes the final score server-side. In parallel the browser posts a 320×240 JPEG every 3 seconds to <code>POST /api/analyze-frame</code> <em>with the session id</em>, and the server records its own verdict.</p>
+
+      <h3 class="h3">Stack, and the actual reason each piece is there</h3>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Layer</th><th>Choice</th><th>What it does here</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>API</td><td>FastAPI + Uvicorn</td><td>Async routing, Pydantic validation, dependency-injected auth / DB / rate limits, <code>run_in_threadpool</code> for blocking ML calls</td><td><code>app.py</code></td></tr>
+          <tr><td>LLM</td><td>Groq · <code>llama-3.3-70b-versatile</code> via <code>langchain-groq</code></td><td>Question generation, follow-ups, answer evaluation, improvement plan. temp 0.2, max_tokens 8000, <strong>timeout 60s, 3 retries</strong></td><td><code>services/question_generator.py</code></td></tr>
+          <tr><td>Live state</td><td>Redis · JSON blob, 6 h TTL</td><td>Whole <code>InterviewSession</code> serialised per mutation. Dev falls back to a process dict; <strong>production refuses to boot</strong> without Redis</td><td><code>core/redis_session_store.py</code></td></tr>
+          <tr><td>Proctoring</td><td>Redis hash · <code>HINCRBY</code></td><td>Five integer counters per session, deliberately <em>not</em> on the session blob so a frame can never clobber an answer</td><td><code>core/redis_session_store.py</code></td></tr>
+          <tr><td>Records</td><td>Postgres via SQLAlchemy 2.x</td><td>Two tables: <code>users</code>, <code>interviews</code>. Status, final score, and a <code>report_data</code> JSON blob that is now <strong>read back</strong></td><td><code>models/db_models.py</code></td></tr>
+          <tr><td>Auth</td><td>JWT HS256 + bcrypt</td><td>Bearer tokens, <strong>480-min expiry</strong>, <code>sub</code> = username, per-request DB lookup for <code>is_admin</code>, <code>/auth/refresh</code></td><td><code>core/auth.py</code>, <code>api/auth_routes.py</code></td></tr>
+          <tr><td>Abuse control</td><td>Fixed-window limiter</td><td>Redis-backed with a process fallback. Login, signup, upload, answer, frames, audio, TTS</td><td><code>core/rate_limit.py</code></td></tr>
+          <tr><td>Vision (server)</td><td>YOLOv8n only</td><td>Phone and extra-person detection — the only <em>verified</em> integrity signals. Suspicious classes cut to <code>cell phone</code>. Server MediaPipe was removed</td><td><code>app.py</code></td></tr>
+          <tr><td>Vision (browser)</td><td>MediaPipe FaceMesh via CDN</td><td>Continuous local mesh, iris-ratio gaze, canvas overlay. <strong>Sole</strong> source of face presence and attention; totals posted to <code>/attention</code> as feedback</td><td><code>frontend/pages/interview.js</code></td></tr>
+          <tr><td>Speech in</td><td>Web Speech API + faster-whisper <code>small</code> int8 CPU</td><td>Live interim transcript in-browser; the recorded blob is re-transcribed server-side and overwrites it <strong>only above 0.6 confidence</strong></td><td><code>interview.js</code>, <code>app.py</code></td></tr>
+          <tr><td>Speech out</td><td>ElevenLabs <code>eleven_multilingual_v2</code></td><td>AI messages spoken; base64 MP3 in JSON; browser <code>speechSynthesis</code> is the fallback; 503 when no key is set</td><td><code>app.py</code></td></tr>
+          <tr><td>Frontend</td><td>Vanilla JS, 12 global scripts, Tailwind CDN</td><td>One mutable <code>state</code> object, a <code>switch</code> router over <code>state.step</code>, <code>innerHTML</code> rendering with explicit escaping</td><td><code>frontend/js/</code></td></tr>
+          <tr><td>Tests</td><td>pytest, 38 tests</td><td>State machine (20), evaluation normalisation (8), JSON recovery (10). Fakes for the LLM and the store; no network, no models</td><td><code>tests/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose">
+      <h3 class="h3">Data model, in full</h3>
+      <p><code>users</code>: <code>id</code> PK, <code>username</code> unique+index (64), <code>email</code> unique+index (320), <code>hashed_password</code>, <code>is_admin</code>, <code>created_at</code>.</p>
+      <p><code>interviews</code>: <code>id</code> PK, <code>session_id</code> unique+index (64), <code>user_id</code> FK → <code>users.id</code> <code>ON DELETE CASCADE</code> <strong>NOT NULL</strong> indexed, plus <code>resume_name</code>, <code>job_role</code>, <code>status</code>, <code>score</code>, <code>created_at</code>, and <code>report_data</code> as an unbounded JSON column. One-to-many with <code>cascade="all, delete-orphan"</code> on the ORM side.</p>
+      <p>Schema is created with <code>Base.metadata.create_all()</code> at import — <span class="gap">still no migration tool</span>, which is a real answer you should give plainly rather than dodge. The live interview object (questions, answers, follow-ups, evaluations, turn counter, running conversation history) lives in Redis and reaches Postgres only as the final <code>report_data</code> blob.</p>
+      <p><strong>Why <code>user_id</code> being NOT NULL matters:</strong> an interview with no owner cannot be access-checked. Making it non-nullable means an un-authorizable row cannot exist by construction, rather than relying on every insert path remembering to set it.</p>
+
+      <h3 class="h3">Where it is genuinely strong</h3>
+      <p>Ownership is enforced by a single reusable dependency (<code>get_owned_interview</code>) returning 404 rather than 403 so IDs cannot be probed, and <code>/analyze-frame</code> reuses it. Every blocking model call is pushed off the event loop with <code>run_in_threadpool</code>. MediaPipe, which is not thread-safe, is serialised behind an explicit lock — and now runs in static mode so the lock isn't hiding a correctness bug. Resume uploads are read in 1 MB chunks and aborted at the cap, so an oversized file is never fully buffered, and are never written to disk. Errors are logged server-side and returned as generic messages. Production boot refuses to start on a weak JWT secret, on <code>DEBUG=true</code>, on wildcard CORS, or with Redis unreachable. The final score is computed from data the server observed, and <code>/end</code> has no way to accept a number.</p>
+
+      <h3 class="h3">Where it is still weak</h3>
+      <p>All questions are shipped to the browser up-front, so devtools can read ahead. Prompt injection through resume text is unmitigated. Escaping is per-call-site rather than escape-by-default. There are no migrations, no CI, no container, no metrics beyond one counter. Two independent gaze algorithms (browser iris ratio, server nose ratio) can disagree and nothing reconciles them. Three docs — <code>README.md</code>, <code>INTEGRATION_GUIDE.md</code>, <code>architecture.md</code> — describe a design that no longer exists.</p>
+
+      <div class="note"><b>Framing that works.</b> The strongest thing you can say about this project is not "here is my architecture". It is: "I audited it, found 24 defects including one XSS and a scoring system the browser controlled, fixed all of them, wrote the first 38 tests, and here are the five things I know are still wrong." That is a seniority signal. Volunteering a bug before the interviewer finds it converts a weakness into evidence of judgement.</div>
+    </div>
+  </section>
+
+  <!-- =============== 01 LEDGER =============== -->
+  <section class="sec" id="ledger">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>01</i><h2>Defect ledger</h2></div>
+      <p class="sec-lede">The 24 defects, what each one actually cost, and the one-line version of the fix. Know these cold — an interviewer reading <code>FIXES_REPORT.md</code> will ask about them by name, and "why did you fix it that way" is the real question underneath.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Defect</th><th>Cost</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Five unescaped LLM-output sinks in <code>innerHTML</code></td><td>Stored XSS; chained with attacker-controlled resume text and the JWT in <code>localStorage</code>, a path to account takeover</td><td><code>escapeHtml()</code> on all five</td></tr>
+          <tr><td>2</td><td>pdf.js run on every file type; failure wrote a placeholder</td><td>DOCX resumes generated an entire interview <strong>from the filename</strong>; the server's table-walking DOCX extractor was unreachable</td><td>Gate on <code>.pdf</code> client-side and server-side; failure leaves text empty</td></tr>
+          <tr><td>3</td><td>No rate limiting anywhere</td><td>Unlimited credential stuffing, free Whisper/YOLO compute, free ElevenLabs billing</td><td><code>core/rate_limit.py</code>, seven limiters</td></tr>
+          <tr><td>4</td><td>60-minute JWT with no refresh</td><td>Mid-interview logout that destroyed the session id, stranding a live Redis session</td><td>480-min default + <code>/auth/refresh</code> + proactive client renewal</td></tr>
+          <tr><td>5</td><td>Browser computed the final score and POSTed it to <code>/end</code></td><td>The score in the database was whatever the browser said; the <code>ge=0, le=100</code> validator checked shape, not provenance</td><td><code>/end</code> takes no body; server recomputes</td></tr>
+          <tr><td>6</td><td><code>/analyze-frame</code> was stateless</td><td>Proctoring was a nudge in a sidebar, never evidence; nothing to compute integrity from</td><td>Session-bound frames; five counters via <code>HINCRBY</code></td></tr>
+          <tr><td>7</td><td><code>eye_contact = avg_technical × 0.90</code></td><td>A fabricated number that looked measured; clamped to [40,95] so it always looked plausible</td><td>Attention is now measured by the browser (iris gaze, camera rate) and reported as <strong>feedback, not a scored component</strong>. Server MediaPipe removed entirely</td></tr>
+          <tr><td>8</td><td>Unparseable evaluations scored 8.0 as real</td><td>A run of parse failures <em>inflated</em> the final score, indistinguishable from genuine evaluations</td><td><code>unscored</code> flag; excluded from the average and surfaced to the user</td></tr>
+          <tr><td>9</td><td>Report iterated <code>session.answers</code></td><td>One question with three follow-ups emitted four identical <code>qa_pairs</code></td><td><code>if answer.is_followup: continue</code> — the field was already written and never read</td></tr>
+          <tr><td>10</td><td><code>FollowUpQuestion.question</code> held the <em>next</em> question</td><td>Every record but the last in each thread paired the wrong question with the answer — wrong data at rest</td><td>One record per answer; <code>next_question</code> in its own field</td></tr>
+          <tr><td>11</td><td>Follow-up LLM failure unwound the request</td><td>An already-evaluated answer was discarded; the candidate had to retype it</td><td>Fall back to the seed follow-up the generation prompt already produced</td></tr>
+          <tr><td>12</td><td>Unguarded read-modify-write on the session</td><td>Two concurrent submits — a double-Enter — silently lost an answer, its evaluation and its follow-up</td><td>Turn token → 409 before any LLM call; in-flight guard in the UI</td></tr>
+          <tr><td>13</td><td>Reports gated on the live Redis session</td><td>404 after 6 hours for a report sitting durably in Postgres; and a fresh LLM call on every refresh</td><td>Serve <code>report_data</code> when it exists</td></tr>
+          <tr><td>14</td><td>Redis outage degraded to a per-process dict</td><td>With multiple workers, "session expired" mid-interview at random</td><td><code>RedisUnavailableError</code> in production; dev fallback kept</td></tr>
+          <tr><td>15</td><td><code>LLM_TIMEOUT_SECONDS</code> / <code>LLM_MAX_RETRIES</code> never imported</td><td>An unbounded LLM call could pin a threadpool worker indefinitely</td><td>Wired into the <code>ChatGroq</code> constructor</td></tr>
+          <tr><td>16</td><td>first-<code>{</code>-to-last-<code>}</code> slice, copied three times</td><td>Any response with two objects or a trailing brace failed to parse</td><td><code>services/llm_json.py</code> using <code>raw_decode</code></td></tr>
+          <tr><td>17</td><td><code>_fill_prompt</code> silently left unfilled placeholders</td><td>A typo'd key shipped a literal <code>{resume_text}</code> to the model, undetected</td><td>Leftover-placeholder scan, logged at ERROR</td></tr>
+          <tr><td>18</td><td>Whisper overwrote the live transcript unconditionally</td><td>A worse transcription destroyed the candidate's text; the confidence value was ignored</td><td>Gate the overwrite on confidence ≥ 0.6</td></tr>
+          <tr><td>19</td><td>Shared FaceMesh with <code>static_image_mode=False</code></td><td>Tracking state carried between <em>different candidates</em>; the lock made it deterministic, not correct</td><td><code>static_image_mode=True</code></td></tr>
+          <tr><td>20</td><td>Suspicious classes included bottle, cup, keyboard…</td><td>Constant false alarms in the candidate's face, indistinguishable from real ones</td><td>Cut to <code>cell phone</code></td></tr>
+          <tr><td>21</td><td>No model warm-up</td><td>The first candidate paid the YOLO + MediaPipe load on their request thread</td><td>Background startup hook; loaders stay lazy</td></tr>
+          <tr><td>22</td><td>Difficulty picker sent nowhere, and shown after generation</td><td>The UI lied: a visible control that did nothing</td><td>Picker moved before generation; <code>DIFFICULTY_DIRECTIVES</code> in the prompt</td></tr>
+          <tr><td>23</td><td>Only "excellent" or the depth cap ended a follow-up thread</td><td>The weakest answers got the longest interrogation</td><td>Two consecutive "poor" also exits</td></tr>
+          <tr><td>24</td><td>~700 lines of dead code; no tests at all</td><td>Dead code is documentation that lies; every past fix was unpinned</td><td>Deleted; 38 tests added</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =============== 02 CORE QUESTIONS =============== -->
+  <section class="sec" id="core">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>02</i><h2>Core questions</h2></div>
+      <p class="sec-lede">The eighteen questions most likely to be asked about <em>this</em> repository, with what the interviewer is actually testing and the evidence to cite. Generic "what is REST" material has been removed.</p>
+    </div>
+
+    <ul class="qlist">
+
+      <li class="q" data-tier="easy">
+        <div class="q-tag"><span class="tier tier-easy">Easy</span><span class="q-id">01</span></div>
+        <div>
+          <p class="q-text">Give me the two-minute version of this project.</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether you can compress without either drowning them in stack names or being so vague it sounds like a tutorial. Lead with the problem, then the one non-obvious design decision.</p></div>
+            <div class="dt"><h4>Shape of a good answer</h4><p>Problem (adaptive spoken interview) → the split (Postgres owns identity, Redis owns the live session, the browser owns real-time UX) → the one interesting constraint (two sequential LLM calls per turn is the latency floor, which is why the provider choice is Groq) → what you'd change.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="medium">
+        <div class="q-tag"><span class="tier tier-medium">Med</span><span class="q-id">02</span></div>
+        <div>
+          <p class="q-text">Why two data stores? Which one is the source of truth?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether the split is reasoned or cargo-culted. The wrong answer is "Redis is faster".</p></div>
+            <div class="dt"><h4>Answer</h4><p>Different things, not a cache. Redis holds the live session because every answer rewrites the whole blob 30–40 times a session — in Postgres that's WAL and vacuum pressure, in Redis it's a SET that expires itself. Postgres holds ownership <em>so that authorization has something durable</em>: if ownership lived in Redis, an expired key would make a transcript unauthorizable rather than unavailable.</p></div>
+            <div class="dt one"><h4>Follow-ups they will ask</h4><ol><li>What if they disagree? (Postgres wins for access control and finished reports; Redis for live state.)</li><li>Why are proctoring counters a separate key? (Frames every 3s vs. a read-modify-write of the session — same blob means every frame can clobber an answer.)</li></ol></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">03</span></div>
+        <div>
+          <p class="q-text">Walk me through a single answer submission, and tell me what it costs.</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether you know your own hot path in terms of round trips, not just function names.</p></div>
+            <div class="dt"><h4>Answer</h4><p>One Postgres SELECT (ownership), a rate-limit check, two Redis GETs, the turn check, one Groq call to evaluate, conditionally a second Groq call for the follow-up, one Redis SET. The two LLM calls are the latency floor and <em>cannot</em> be parallelised, because the follow-up prompt consumes <code>evaluation.follow_up_direction</code>.</p></div>
+            <div class="dt one"><h4>The detail worth volunteering</h4><p>It used to be three Redis GETs — the route re-read the whole session just to check whether the status had flipped to "completed", which <code>submit_answer</code> already knew. And the turn check sits deliberately <em>before</em> both LLM calls, so a duplicate submission costs one GET and a 409 rather than two Groq calls.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">04</span></div>
+        <div>
+          <p class="q-text">Two answers submitted at the same time. What happens, and why didn't you use a lock?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>This is the concurrency question, and "I'd add a lock" is the answer that loses it. They want to hear you reject the obvious tool for a stated reason.</p></div>
+            <div class="dt"><h4>Answer</h4><p>The second gets a 409. The session carries a monotonic <code>turn</code>; the client echoes it; a mismatch raises <code>StaleTurnError</code>. A lock would have to be held <strong>across two sequential Groq calls</strong> — seconds — so its TTL has to be long enough for the slow case and short enough not to wedge on a crash, and any TTL you pick can expire mid-call. A turn token has no lifetime to get wrong, and rejects the duplicate before spending the LLM calls.</p></div>
+            <div class="dt one"><h4>Concede this before they push</h4><p><code>turn</code> is optional for backward compatibility, so omitting it restores last-write-wins. It should become required once no old clients are live. The threat model is a candidate racing themselves, not an attacker.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="expert">
+        <div class="q-tag"><span class="tier tier-expert">Expert</span><span class="q-id">05</span></div>
+        <div>
+          <p class="q-text">Who computes the final score?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Trust boundaries. This is the single best story in the project — do not let them find it first.</p></div>
+            <div class="dt"><h4>Answer</h4><p>The server, from evaluations and server-observed frames. It used to be the browser: the results page fetched the report (which wrote the backend score) and then immediately POSTed its <em>own</em> number to <code>/end</code>, overwriting it. <code>/end</code> now takes no body at all.</p></div>
+            <div class="dt one"><h4>The line that lands</h4><p>"The endpoint validated <code>float, ge=0, le=100</code>. That's the part I'd point at — it <em>looks</em> like a security control and it's a shape check. It confirms the number is a number. Anyone could post a 100. Validation that checks shape while ignoring provenance is something I now specifically look for."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="expert">
+        <div class="q-tag"><span class="tier tier-expert">Expert</span><span class="q-id">06</span></div>
+        <div>
+          <p class="q-text">Your report showed an eye-contact score. Where did that number come from?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Intellectual honesty about a metric. Many candidates would bluff this.</p></div>
+            <div class="dt"><h4>Answer</h4><p>Now: <code>(frames − looking_away − no_face) / frames</code> from the server's own counters, and <code>None</code> when no frames were analysed, in which case the UI omits the bar and says why. Before: <code>avg_technical × 0.90</code> — a rescaling of one number, clamped to [40,95] so it always looked reasonable.</p></div>
+            <div class="dt"><h4>The judgement point</h4><p>"The clamping made it worse, not better — it's what made the fake number look defensible. A number that looks measured and isn't is worse than an empty state, because the candidate acts on it. Someone practises eye contact for a week on the strength of their technical score times 0.9. 'Never show a value you can't defend' is the rule I took from this."</p></div>
+            <div class="dt one"><h4>Expect the follow-up: "then is the overall comparable?"</h4><p>Yes — the overall is a <strong>weighted percentage</strong>, not a mean. Fixed weights (technical .35, communication .20, confidence .15, resume alignment .15, eye contact .15); when a component can't be measured its weight is redistributed proportionally so they re-sum to 1.0. Dropping eye contact scales the other four by <code>1/0.85</code>. A perfect candidate scores 100% with or without a camera — that property is the test. The response also carries <code>score_basis</code> naming the components used, so a missing one is visible rather than silently absorbed.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">07</span></div>
+        <div>
+          <p class="q-text">Is there an XSS in this app?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether you understand that LLM output is untrusted input.</p></div>
+            <div class="dt"><h4>Answer</h4><p>There was — five sinks in <code>interview.js</code>, all fed by LLM output, in a file that escapes correctly a few lines away. Chained: resume text is attacker-controlled (the file and the text are independent form fields), it goes into the generation prompt, the model's output goes into <code>primary_question</code>, and that went into <code>innerHTML</code> raw — in a page whose JWT sits in <code>localStorage</code>.</p></div>
+            <div class="dt one"><h4>The part that earns respect</h4><p>"Five <code>escapeHtml()</code> calls is a fix, not a solution. Hand-escaping at every call site means you only need to forget once, and this codebase proves it twice in one file. The class is still open until rendering goes through a tagged template that escapes by default."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="medium">
+        <div class="q-tag"><span class="tier tier-medium">Med</span><span class="q-id">08</span></div>
+        <div>
+          <p class="q-text">How do you stop one candidate reading another's interview?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>IDOR awareness, and whether the 404 was deliberate.</p></div>
+            <div class="dt"><h4>Answer</h4><p><code>get_owned_interview</code>, a dependency every session route depends on. Mismatched owner raises <strong>404, not 403</strong> — 403 confirms the id exists, which turns the endpoint into an enumeration oracle. <code>user_id</code> is <code>nullable=False</code> so an unowned row can't exist. The UUID is defence in depth, not the control — before this dependency it <em>was</em> the control, which is a textbook IDOR.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">09</span></div>
+        <div>
+          <p class="q-text">What happens if Redis goes down?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether "graceful degradation" is a reflex or a decision.</p></div>
+            <div class="dt"><h4>Answer</h4><p>In dev it falls back to a process dict, so the repo runs with no Redis installed. In production it raises and <strong>the process doesn't start</strong>. It used to degrade silently everywhere: with four workers, each got its own dict, so an answer landed on a worker that had never seen the session — "Interview session has expired", mid-interview, at random. The docstring said "single-worker development only", but a docstring isn't an enforcement mechanism.</p></div>
+            <div class="dt one"><h4>Why this fix is satisfying</h4><p>The pattern was already in the codebase — <code>settings.py</code> refuses to boot on a weak JWT secret, <code>database.py</code> connects eagerly and dies in production. Redis was the one piece with the opposite treatment, for no reason other than nobody having looked at the three together.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="medium">
+        <div class="q-tag"><span class="tier tier-medium">Med</span><span class="q-id">10</span></div>
+        <div>
+          <p class="q-text">Explain the follow-up logic. When does a thread end?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether the state machine is designed or accreted.</p></div>
+            <div class="dt"><h4>Answer</h4><p>Every primary question gets at least one follow-up, unconditionally — the first answer makes a claim, the follow-up tests whether it's real, and making that conditional on the score would give strong candidates a <em>shallower</em> interview. After that: continue while depth &lt; 3, the rating is poor/fair/good, and you haven't answered "poor" twice in a row.</p></div>
+            <div class="dt one"><h4>The two-poor exit</h4><p>Added because only "excellent" or the cap could stop a thread before, so a candidate who plainly didn't know a topic got three consecutive probes on it. The loop now terminates on certainty in <em>either</em> direction. Note the counter resets on a better answer — that's the case a naive implementation gets wrong, and there's a test named for it.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">11</span></div>
+        <div>
+          <p class="q-text">How do you get reliable JSON out of a model that emits text?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Practical LLM engineering, and whether you know why the naive approach breaks.</p></div>
+            <div class="dt"><h4>Answer</h4><p>Two layers, in one place. Strip fences, then <code>json.JSONDecoder().raw_decode()</code> from the first <code>{</code> — it parses the first <em>complete</em> object and reports where it stopped, so a trailing remark or a second object is fine. Then normalise every field against a whitelist: unknown category → <code>skill</code>, unknown difficulty → <code>intermediate</code>, score &gt; 10 → divide by 10 and clamp.</p></div>
+            <div class="dt one"><h4>Volunteer this</h4><p>"It was first-<code>{</code>-to-last-<code>}</code>, copy-pasted into three functions. Given two objects it produces a string spanning both, which isn't valid JSON. Two of my ten parser tests fail against the old implementation. And layer 2 is the one that matters — the code has explicit handling for <code>score: 85</code> and for a category called 'engineering scenario', which tells you both actually happened."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="expert">
+        <div class="q-tag"><span class="tier tier-expert">Expert</span><span class="q-id">12</span></div>
+        <div>
+          <p class="q-text">What happens when the evaluation LLM returns junk?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether your fallbacks were designed or just stopped the exception.</p></div>
+            <div class="dt"><h4>Answer</h4><p>It returns a hardcoded "good" rating, tagged <code>unscored=True</code>, excluded from the score, and reported to the user. "Good" rather than "fair" is deliberate: the rating feeds the follow-up decision, and "fair" would escalate an LLM hiccup into three more probes on a topic the system knows nothing about.</p></div>
+            <div class="dt one"><h4>The honest framing</h4><p>"The original design wasn't wrong, it was incomplete. It made a real trade — distort the score rather than the flow — and then never implemented the 'distort the score' half in a way anyone could see. The 8.0 went into the average as real, and 8.0 is above the midpoint, so parse failures inflated the final number. One boolean closes it."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">13</span></div>
+        <div>
+          <p class="q-text">You run face detection in the browser <em>and</em> on the server. Why both?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether the duplication is reasoned. The wrong answer is "for accuracy".</p></div>
+            <div class="dt"><h4>Answer</h4><p>They no longer duplicate. The browser is the <em>sole</em> source of face presence and gaze — it runs FaceMesh at camera rate with an iris-based estimate. The server runs only YOLO, for phone and extra-person detection, on one 320×240 JPEG every 3 seconds. <strong>Browser = measurement, server = verification.</strong> The server used to run its own FaceMesh too, computing a coarser nose-ratio gaze at 1/90th the sample rate, purely so the number would be server-attested — and nothing here relies on that attestation.</p></div>
+            <div class="dt one"><h4>The privacy point worth making</h4><p>"Frames are never stored. Only five integers per session. The system can say '40 of 200 frames showed the candidate looking away' without retaining a single image of them."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="expert">
+        <div class="q-tag"><span class="tier tier-expert">Expert</span><span class="q-id">14</span></div>
+        <div>
+          <p class="q-text">There's a lock around MediaPipe. What does it cost, and what did it fail to fix?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether you understand the difference between a throughput problem and a correctness one. This is the best CV answer in the project.</p></div>
+            <div class="dt"><h4>Answer</h4><p>Cost: every face analysis in the process is serialised, which is a hard concurrency ceiling. What it didn't fix: the shared instance ran <code>static_image_mode=False</code>, telling MediaPipe to carry tracking state between frames — while being fed <em>interleaved frames from different candidates on different webcams</em>. The tracker was told "next frame of the same video" when it was a different person in a different room.</p></div>
+            <div class="dt one"><h4>The line</h4><p>"The lock <em>looked</em> like the fix — someone saw a concurrency problem, added a lock, the crashes stopped, and the real bug kept running underneath, now reliably. I fixed it with <code>static_image_mode=True</code>, then asked the better question: why is this on the server at all? The browser already did it better. The lock, the model and 121 MB of dependency are all gone."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="medium">
+        <div class="q-tag"><span class="tier tier-medium">Med</span><span class="q-id">15</span></div>
+        <div>
+          <p class="q-text">Why Groq and llama-3.3-70b?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Whether the model choice has a reason beyond "it was free".</p></div>
+            <div class="dt"><h4>Answer</h4><p>Latency. It's a spoken interview — the candidate stops talking and waits, and every turn is two sequential calls, so per-token speed is the biggest lever on how the product <em>feels</em>. A stronger, slower model makes the conversation feel broken regardless of question quality. Temperature 0.2 because two of three prompts demand parseable JSON and the resume already supplies all the variation the questions need.</p></div>
+            <div class="dt one"><h4>Have this ready</h4><p>"<code>timeout=60, max_retries=3</code> are wired in now — they were defined in config and never imported, so the client ran on library defaults and an unbounded call could pin a threadpool worker. If I were tuning it I'd split into two clients: short timeout and one retry for the interactive answer path, longer budget for generation behind the progress screen."</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="medium">
+        <div class="q-tag"><span class="tier tier-medium">Med</span><span class="q-id">16</span></div>
+        <div>
+          <p class="q-text">How is this tested, and what would you write next?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Get ahead of it. There were zero tests until recently and <code>AUDIT.md</code> referenced two files that don't exist.</p></div>
+            <div class="dt"><h4>Answer</h4><p>38 tests: 20 on the state machine, 8 on evaluation normalisation, 10 on JSON recovery. Two fakes, about eighty lines, no production refactor — the seams were already there (the LLM behind <code>self.generator</code>, the store behind <code>RedisSessionStore</code>, the CV models behind lazy loaders) and had never been used.</p></div>
+            <div class="dt one"><h4>Next, in order</h4><ol><li>Route tests: the ownership 404, the 409 on a replayed turn, the 429s, and that <code>/end</code> refuses a body.</li><li>Characterization tests for the <code>AUDIT.md</code> list — dozens of past fixes with nothing holding them fixed.</li><li>Frontend tests with the <code>jsdom</code> already sitting in <code>package.json</code>.</li></ol></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="hard">
+        <div class="q-tag"><span class="tier tier-hard">Hard</span><span class="q-id">17</span></div>
+        <div>
+          <p class="q-text">How would you know any of this was failing in production?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Operational maturity. Don't oversell what you have.</p></div>
+            <div class="dt"><h4>Answer</h4><p><code>/api/health</code> reports the session-store mode and a cumulative evaluation-parse-failure counter. That's the minimum viable version and I'd describe it as such — it's an affordance for a human who already suspects something, not alerting. Nothing polls it, nothing pages.</p></div>
+            <div class="dt one"><h4>What's missing</h4><p>Counters on all three fallback paths, 429 rates per limiter, structured logs, and a histogram on Groq call latency — which is the metric that actually predicts whether this product feels broken.</p></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="q" data-tier="expert">
+        <div class="q-tag"><span class="tier tier-expert">Expert</span><span class="q-id">18</span></div>
+        <div>
+          <p class="q-text">You found 24 bugs in your own project. How?</p>
+          <div class="detail">
+            <div class="dt"><h4>Testing</h4><p>Process, not luck. This question rewards a repeatable method.</p></div>
+            <div class="dt"><h4>Answer — four techniques</h4><ol><li><strong>Follow values, not files.</strong> Pick a value, ask who writes it and who reads it. The difficulty picker, the client score and the proctoring counters all had a writer and no reader. You cannot find that reading a file — each file looks fine on its own.</li><li><strong>Grep every exported constant for a second occurrence.</strong> Found <code>LLM_TIMEOUT_SECONDS</code>, <code>report_data</code> and <code>is_followup</code> — all defined, none read.</li><li><strong>Ask "what does this fallback cost?" at every <code>except</code>.</strong> Every silent fallback here was defensible as flow control and undefended as a data decision.</li><li><strong>Write the test before believing the bug.</strong> Two things I was sure were bugs turned out to be fine.</li></ol></div>
+            <div class="dt one"><h4>The summarising line</h4><p>"The single most useful question was <em>what would make this number wrong, and would anyone notice?</em> Every scoring bug answers yes to the first and no to the second. That's the profile of the bugs that survive longest — not the ones that crash, the ones that produce a plausible number."</p></div>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </section>
+
+  <!-- =============== 03 TRAPS =============== -->
+  <section class="sec" id="traps">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>03</i><h2>Interview traps</h2></div>
+      <p class="sec-lede">Places where a confident-sounding answer is wrong, or where the UI still names something the code doesn't do. Each of these is findable in the repo in under ten minutes.</p>
+    </div>
+
+    <div class="blocks">
+      <div class="block">
+        <h4><span>Trap</span>"RAG Evaluator Agent Logs"</h4>
+        <p>The interview sidebar has a panel with that name, badged "Llama 3 (Groq)". <strong>There is no retrieval anywhere</strong> — no vector store, no embeddings, no document index. Evaluation is a single stateless prompt containing only the question and the answer. If you say "RAG" out loud and can't produce a retriever, you have handed them the interview.</p>
+        <ul class="ev"><li><code>frontend/pages/interview.js</code> · <code>_ragEvaluatorPanel</code></li></ul>
+        <p><b>Say:</b> "That panel is misnamed and it's on my list. It's a plain evaluation prompt with no retrieval step. If I wanted the name to be true, the retrieval worth adding is over the candidate's own resume — pull the relevant experience section and put it in the evaluation prompt, so 'you said you used Kafka' can be checked against what the resume claims."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>"Running Agent Tasks" — five agents</h4>
+        <p><code>state.agentStatus</code> is a plain object whose strings are assigned by hand around API calls. There is no agent framework, no scheduler, no tool loop, no autonomy. It is a progress indicator with an ambitious label.</p>
+        <ul class="ev"><li><code>frontend/js/state.js</code> · <code>agentStatus</code></li></ul>
+        <p><b>Say:</b> "It's a status display, not an agent system. I'd rename it. What it <em>does</em> represent honestly is the pipeline stages — generate, evaluate, follow up — which are real, sequential, and not agentic."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>The camera overlay when there's no webcam</h4>
+        <p><code>startCvCanvas()</code> draws a synthetic bounding box with random keypoints and a hard-coded confidence figure. It renders as though it were tracking. If an interviewer denies camera access and sees "FACE TRACKED", that is a credibility problem, not a UI bug.</p>
+        <ul class="ev"><li><code>frontend/pages/interview.js</code> · <code>startCvCanvas</code></li></ul>
+        <p><b>Say:</b> "That's a demo placeholder for screenshots and it should be labelled as one. Same lesson as the eye-contact score — don't render a value that implies a measurement you didn't take."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>The README describes a different project</h4>
+        <p><code>README.md</code> lists OpenAI, Gemini and <code>langchain-google-genai</code> as the NLP stack. None are imported; the only LLM is Groq. <code>INTEGRATION_GUIDE.md</code> documents a flat file layout (<code>services.py</code>, <code>models.py</code> at the root) from before the package refactor. <code>architecture.md</code> describes "4 questions per skill", the deleted bank-based design.</p>
+        <p><b>Say:</b> "Those are stale and I know it. The unused OpenAI config in <code>core/config.py</code> is deleted; the docs are the last thing on the list, deliberately — I'd rather rewrite them after the code stops moving than write them twice."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>"Your proctoring is server-side now, so it's tamper-proof"</h4>
+        <p>Don't claim this. A client can still simply stop sending frames. What changed is that the <em>policy</em> is no longer client-controlled — you can't decide what a phone is worth, or post a 100.</p>
+        <p><b>Say:</b> "Going quiet is handled. Answer timestamps are server-stamped, so the interview's duration can't be forged, and frames arrive every 3s — so the server knows how many should have come. If the feed worked and then stopped, attentiveness is scored over the <em>expected</em> frames, not the received ones, so unaccounted time counts against you. Zero frames is treated differently and never penalised: that's someone with no webcam, and they claimed nothing. The property I'd point at is that going dark now scores <em>worse</em> than being caught with a phone — before, suppressing the metric handed its weight back, so evasion paid."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>"Why not use structured output instead of your JSON parser?"</h4>
+        <p>This is the right answer and you should agree immediately rather than defend the parser. The trap is agreeing <em>too</em> far.</p>
+        <p><b>Say:</b> "Agreed — Groq supports JSON mode and binding a pydantic schema removes most of this. What I would <em>not</em> drop is the normalisation layer: schema-valid isn't semantically valid, and 'the model returned a category we've never heard of' is a schema-valid response."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>"You ship all the questions to the browser"</h4>
+        <p>True, and deliberate. Don't pretend it's a bug or that you missed it.</p>
+        <p><b>Say:</b> "Deliberate trade. It means the interview screen never blocks on 'fetch next question' — the only per-turn round trip is the submission, which has to happen anyway. The cost is devtools can read ahead. For a self-practice tool that's fine; for a proctored assessment it isn't, and the fix is one question at a time, paying a round trip I chose not to pay."</p>
+      </div>
+
+      <div class="block">
+        <h4><span>Trap</span>"There's an AUDIT.md full of vulnerabilities. Where did it come from?"</h4>
+        <p>An integrity question, not a technical one. Answer it directly.</p>
+        <p><b>Say:</b> "I audited the project against itself, wrote up everything I found, then fixed it — that's <code>FIXES_REPORT.md</code>. What I'd point at is that the audit's own claim to have been 'verified by tests_smoke.py' was false; neither file existed. So the first thing I did after fixing the code was write the first real tests, because a list of fixed bugs with nothing pinning them is a list of bugs that come back."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== 04 OPEN =============== -->
+  <section class="sec" id="open">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>04</i><h2>What's still open</h2></div>
+      <p class="sec-lede">Three real limitations. Volunteer these — naming your own remaining weaknesses accurately is a stronger signal than a clean sheet.</p>
+    </div>
+
+    <ol class="rank">
+      <li>Prompt injection via resume text is unmitigated.
+        <small>Resume text goes verbatim into the generation prompt. Contained — field normalisation stops invalid categories and out-of-range scores, escaping stops script execution — but you can still talk the model into asking you easy questions. Self-practice: you're cheating yourself. Graded: disqualifying.</small></li>
+      <li>Escaping is per-call-site, not escape-by-default.
+        <small>Five sinks fixed; the mechanism that allowed them is unchanged. Until rendering goes through a tagged template, the sixth one is a matter of time.</small></li>
+      <li>No migrations, no CI, no container, no metrics.
+        <small><code>create_all()</code> at import is fine until the first schema change against real data. The absence of CI is what makes the 38 tests weaker than they look — nothing runs them but me.</small></li>
+    </ol>
+  </section>
+
+  <!-- =============== 05 STUDY =============== -->
+  <section class="sec" id="study">
+    <div class="sec-head">
+      <div class="sec-kicker"><i>05</i><h2>Study before you go</h2></div>
+      <p class="sec-lede">Ten things worth being able to say without reaching. Everything else you can reason about live.</p>
+    </div>
+
+    <ol class="rank">
+      <li>The exact cost of one answer submission.
+        <small>One Postgres SELECT, two Redis GETs, one SET, up to two sequential Groq calls — and why the two calls can't be parallelised (the follow-up prompt consumes the evaluation's output).</small></li>
+      <li>Why a turn token and not a lock.
+        <small>The critical section spans two LLM calls; any lock TTL can expire mid-call. This is the concurrency answer and it must be fluent.</small></li>
+      <li>Why 404 and not 403 on the ownership check.
+        <small>403 confirms the id exists, turning the endpoint into an enumeration oracle.</small></li>
+      <li>The scoring trust boundary, start to finish.
+        <small>The browser used to compute and POST the final score; <code>ge=0, le=100</code> validated shape while ignoring provenance. Now <code>/end</code> takes no body, and the overall is a weighted percentage over the criteria that were actually measured.</small></li>
+      <li>Why server-side MediaPipe was removed.
+        <small>The browser already computed a better gaze estimate (iris vs. nose-in-bbox) at 90× the sample rate. The server's only advantage was attestation, which nothing here relies on. Sourcing decides role: browser-measured means feedback, server-measured means it can carry a penalty.</small></li>
+      <li>What <code>unscored</code> does and why the rating stayed "good".
+        <small>The rating feeds the follow-up decision; "fair" would over-probe. The flag removes the scoring consequence without changing the flow decision.</small></li>
+      <li>Why the report is served from Postgres.
+        <small>Fixes the 6-hour TTL cliff and stops re-billing the improvement-plan LLM call on every refresh — one change, two problems.</small></li>
+      <li>Why <code>_fill_prompt</code> can't be <code>str.format</code>.
+        <small>The templates embed the JSON schema the model must emit; every example brace would be read as a replacement field.</small></li>
+      <li>The difference between the browser and server gaze algorithms.
+        <small>Browser: iris position between eye corners. Server: nose x normalised against the face's own bounding width — the naive version compared raw nose x against fixed thresholds and flagged anyone sitting off-centre.</small></li>
+      <li>Your own list of what's still wrong.
+        <small>Five items, in priority order, with the reason for the ordering. Being asked "what would you do next" and having a ranked answer is worth more than any single fix.</small></li>
+    </ol>
+
+    <div class="note"><b>How to use this file.</b> Read section 01 until you can recite any row from the defect number alone. Then run section 02 out loud, untimed, marking every question where you reached for a guess. Then run it again with the file closed. The questions you fail on the second pass are the only ones worth more study.</div>
+  </section>
+
+  </main>
+</div>
+
+<footer class="wrap">
+  Generated from the InterviewAI repository at <code>main</code>, after the 24-defect fix pass · every claim traceable to a file · see <code>FIXES_REPORT.md</code> for the full change list and <code>interview-guide.html</code> for the long-form answers.
+</footer>
+
+<script>
+(function(){
+  // counts
+  var qs = document.querySelectorAll('.q');
+  var ds = document.querySelectorAll('.detail');
+  var sq = document.getElementById('s-q'), sd = document.getElementById('s-d');
+  if(sq) sq.textContent = qs.length;
+  if(sd) sd.textContent = ds.length;
+
+  // difficulty filter
+  var off = {};
+  document.querySelectorAll('.fbtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var t = b.dataset.tier, on = b.getAttribute('aria-pressed') === 'true';
+      b.setAttribute('aria-pressed', String(!on));
+      off[t] = on;
+      document.querySelectorAll('.q[data-tier="'+t+'"]').forEach(function(q){
+        q.style.display = on ? 'none' : '';
+      });
+    });
+  });
+
+  // scrollspy
+  var links = [].slice.call(document.querySelectorAll('#toc a'));
+  var secs = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+  if('IntersectionObserver' in window && secs.length){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        links.forEach(function(l){ l.classList.remove('on'); });
+        var m = links.find(function(l){ return l.getAttribute('href') === '#' + e.target.id; });
+        if(m) m.classList.add('on');
+      });
+    }, {rootMargin:'0px 0px -72% 0px', threshold:0});
+    secs.forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
