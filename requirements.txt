@@ -13,7 +13,7 @@ python-dotenv>=1.0.0
 
 # Persistence
 SQLAlchemy>=2.0.30,<3.0
-psycopg2-binary>=2.9.9
+psycopg2-binary>=3.2
 redis>=5.0.0,<7.0
 
 # Auth
